@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import sys, os, re, pickle
-from collections import defaultdict
 #-----------------------------------------------------#
 #--------------Error Messages-------------------------#
 #-----------------------------------------------------#
@@ -54,8 +53,8 @@ def check_adds(filename):
 	if os.path.exists(index_path):
 		index = open(index_path, 'rb')
 		files = pickle.load(index)
-		if filename in files and files[filename][0]:
-			print(files[filename][0], end="")
+		if filename in files:
+			print(files[filename], end="")
 			return
 	
 	print(f"grip-show: error: '{filename}' not found in index", file=sys.stderr)

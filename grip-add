@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import sys, os, re, pickle
-from collections import defaultdict
 
 #-----------------------------------------------------#
 #--------------Error Messages-------------------------#
@@ -18,10 +17,11 @@ if len(sys.argv) == 1:
 #-----------------------------------------------------#
 '''
     contents: 
-        '@Changed': [filename1, filename2]
-        filename: [staged, file content]
+        '@Changed': True false
+        '@Staged': True false
+        filename: file content
 '''
-contents = defaultdict(list)
+contents = {}
 index_path = '.grip/index'
 if os.path.exists(index_path):
     index = open(index_path, 'rb')
@@ -41,12 +41,11 @@ for filename in sys.argv[1:]:
     else:
         content = None
 
-    if filename in contents and content == contents[filename][0]:
+    if filename in contents and content == contents[filename]:
         continue
 
-    contents[filename] = [content]
-    if filename not in contents['@Changed']:   
-        contents['@Changed'].append(filename)
+    contents[filename] = content
+    contents['@Changed'], contents['@Staged'] = True, True
 #-----------------------------------------------------#
 #--------------Save files to  index-------------------#
 #-----------------------------------------------------#

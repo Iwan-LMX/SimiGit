@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import sys, os, re, pickle, shutil
-from collections import defaultdict
 #-----------------------------------------------------#
 #--------------Error Messages-------------------------#
 #-----------------------------------------------------#
@@ -60,39 +59,33 @@ def saveLog(pre_id, curr_id, num, message):
 #-----------------------------------------------------#
 def commit_base(files):
 	#read index
-	if files['@Changed'] and len(files) > 1:
+	if files['@Changed'] and len(files) > 2:
 		for filename, content in files.items():
-			if filename == '@Changed': continue
-			
-			while filename in files['@Changed']: files['@Changed'].remove(filename)
-
-			if not content[0]: #None content
-				continue
+			if filename == '@Changed' or filename == '@Staged': continue
 			#Move file
 			des = os.path.join('.grip/objects', f'{log_num}', filename)
 			os.makedirs(os.path.dirname(des), exist_ok=True)
-			open(des, 'w').write(content[0])
+			open(des, 'w').write(content)
 	else:
 		print("nothing to commit")
 		sys.exit(1)
 
 def commit_witha(files):
 	#read index
-	for filename in files.keys():
-		if filename == '@Changed': continue
-		if filename in files['@Changed']: files['@Changed'].remove(filename)
-		
-		if not content[0]: #None content
-			continue
-		
-		# Read current file and add to index
-		content = open(filename, 'r').read()
-		files[filename] = [content]
-		#Move file
-		des = os.path.join('.grip/objects', f'{log_num}', filename)
-		os.makedirs(os.path.dirname(des), exist_ok=True)
-		open(des, 'w').write(content)
+	if len(files) > 2:
+		for filename in files.keys():
+			if filename == '@Changed' or filename == '@Staged': continue
 
+			# Read current file and add to index
+			content = open(filename, 'r').read()
+			files[filename] = content
+			#Move file
+			des = os.path.join('.grip/objects', f'{log_num}', filename)
+			os.makedirs(os.path.dirname(des), exist_ok=True)
+			open(des, 'w').write(content)
+	else:
+		print("nothing to commit")
+		sys.exit(1)
 
 index_path = '.grip/index'
 if os.path.exists(index_path):
@@ -112,7 +105,7 @@ if os.path.exists(index_path):
 	else:
 		commit_base(files)
 	
-
+	files['@Changed'], files['@Staged'] = False, False
 	print(f"Committed as commit {log_num}")
 	saveLog(pre, log_num, log_num, message)
 	

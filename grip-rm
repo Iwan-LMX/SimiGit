@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import sys, os, re, pickle, argparse
-from collections import defaultdict
 #-----------------------------------------------------#
 #--------------Error Messages-------------------------#
 #-----------------------------------------------------#
@@ -49,7 +48,7 @@ def remove_file(filename, contents):
 	
 	#3. Normal Option
 	#Staged file
-	if contents[filename][0]: 
+	if contents["@Staged"]: 
 		print(f"grip-rm: error: '{filename}' has staged changes in the index", file=sys.stderr)
 		sys.exit(1)
 	
@@ -64,8 +63,7 @@ if os.path.exists(index_path):
 
 	for filename in args.filenames:
 		remove_file(filename, contents)
-		if filename in contents["@Changed"]:
-			contents["@Changed"].remove(filename)
+		contents["@Changed"] = True
 
 	index = open(index_path, 'wb')
 	pickle.dump(contents, index)
