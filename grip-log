@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+import sys, os, re, pickle
+
+#-----------------------------------------------------#
+#--------------Error Messages-------------------------#
+#-----------------------------------------------------#
+if not os.path.exists(".grip"):
+	print("grip-log: error: grip repository directory .grip not found", file=sys.stderr)
+	sys.exit(1)
+	
+if len(sys.argv) != 1:
+	print("usage: grip-log", file=sys.stderr)
+	sys.exit(1)
+
+#-----------------------------------------------------#
+#-----------------Process log-------------------------#
+#-----------------------------------------------------#
+pre_id, curr_id, num, message = '', '', -1, ''
+log_path = ".grip/logs/HEAD"
+if os.path.exists(".grip/logs/HEAD"):
+	logs = open(log_path, 'r').readlines()
+	for log in reversed(logs):
+		pre_info, commit_message = log.split(':')
+
+		pre_info = pre_info.split()
+		pre_id, curr_id = int(pre_info[0]), int(pre_info[1])
+		
+		num, message = re.findall(r"(\d+)\s(.*)", commit_message.strip())[0]
+		print(num, message)

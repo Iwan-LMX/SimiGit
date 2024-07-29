@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+import sys, os, re, pickle
+from collections import defaultdict
+#-----------------------------------------------------#
+#--------------Error Messages-------------------------#
+#-----------------------------------------------------#
+if not os.path.exists(".grip"):
+	print("grip-show: error: grip repository directory .grip not found", file=sys.stderr)
+	sys.exit(1)
+	
+if len(sys.argv) != 2 or ':' not in sys.argv[1]:
+	print("usage: grip-show <commit>:<filename>", file=sys.stderr)
+	sys.exit(1)
+
+commit_num, filename = sys.argv[1].split(':', 1)
+
+if re.match(r"[a-zA-Z0-9.\-_]+", filename).group() != filename:
+	print(f"grip-show: error: invalid filename '{filename}'", file=sys.stderr)
+	sys.exit(1)
+
+
+#-----------------------------------------------------#
+#-----------------Check in log------------------------#
+#-----------------------------------------------------#
+def check_commit(commit_num, filename):
+	pre_id, curr_id, num, message = '', '', -1, ''
+	log_path = ".grip/logs/HEAD"
+	if os.path.exists(".grip/logs/HEAD"):
+		logs = open(log_path, 'r').readlines()
+		for log in logs:
+			pre_info, commit_message = log.split(':')
+			pre_info = pre_info.split()
+			pre_id, curr_id = int(pre_info[0]), int(pre_info[1])
+			num, message = re.findall(r"(\d+)\s(.*)", commit_message.strip())[0]
+			
+			# Check commit files
+			if num == commit_num:
+				object_path = ".grip/objects/"
+				file_path = os.path.join(object_path, num, filename)
+
+				if not os.path.exists(file_path):
+					print(f"grip-show: error: '{filename}' not found in commit {commit_num}", file=sys.stderr)
+					sys.exit(1)
+				
+				print(open(file_path, 'r').read(), end="")
+				sys.exit(0)
+
+	# Not find the commit num
+	print(f"grip-show: error: unknown commit '{commit_num}'", file=sys.stderr)
+	sys.exit(1)
+
+def check_adds(filename):
+	index_path = '.grip/index'
+	if os.path.exists(index_path):
+		index = open(index_path, 'rb')
+		files = pickle.load(index)
+		if filename in files and files[filename][0]:
+			print(files[filename][0], end="")
+			return
+	
+	print(f"grip-show: error: '{filename}' not found in index", file=sys.stderr)
+	sys.exit(1)
+
+if commit_num == '':
+	check_adds(filename)
+else:
+	check_commit(commit_num, filename)

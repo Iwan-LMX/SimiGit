@@ -1,0 +1,125 @@
+#!/usr/bin/env python3
+import sys, os, re, pickle, shutil
+from collections import defaultdict
+#-----------------------------------------------------#
+#--------------Error Messages-------------------------#
+#-----------------------------------------------------#
+if not os.path.exists(".grip"):
+	print("grip-commit: error: grip repository directory .grip not found", file=sys.stderr)
+	sys.exit(1)
+	
+if len(sys.argv) != 3 and len(sys.argv) != 4 :
+	print("usage: grip-commit [-a] -m commit-message", file=sys.stderr)
+	sys.exit(1)
+
+option_a, option_m, message = False, True, sys.argv[-1] 
+if len(sys.argv) == 3:
+	if sys.argv[1] != '-m':
+		print("usage: grip-commit [-a] -m commit-message", file=sys.stderr)
+		sys.exit(1)
+	
+if len(sys.argv) == 4:
+	if sys.argv[1] != '-a' or sys.argv[2] != '-m':
+		print("usage: grip-commit [-a] -m commit-message", file=sys.stderr)
+		sys.exit(1)
+	else:
+		option_a = True
+
+#-----------------------------------------------------#
+#-----------------Process log-------------------------#
+#-----------------------------------------------------#
+def readLog(n: int):
+	"""
+		Test if ./grip/logs/HEAD exist;
+		return prefer, this id, commit_num, message
+	"""
+	pre_id, curr_id, num, message = '', '', -1, ''
+	log_path = ".grip/logs/HEAD"
+	if os.path.exists(".grip/logs/HEAD"):
+		log = open(log_path, 'r').readlines()
+		pre_info, commit_message = log[n].split(':')
+
+		pre_info = pre_info.split()
+		pre_id, curr_id = int(pre_info[0]), int(pre_info[1])
+		
+		num, message = re.findall(r"(\d+)\s(.*)", commit_message.strip())[0]
+
+	return pre_id, curr_id, int(num), message
+
+def saveLog(pre_id, curr_id, num, message):
+	log_path = ".grip/logs/HEAD"
+	os.makedirs(os.path.dirname(log_path), exist_ok=True)
+	content = f"{pre_id} {curr_id} commit : {num} {message}\n"
+
+	open(log_path, 'a').write(content)
+
+	open(".grip/COMMIT_EDITMSG", 'w').write(f"{num} {message}\n")
+	return None
+#-----------------------------------------------------#
+#--------------Load files from index------------------#
+#-----------------------------------------------------#
+def commit_base(files):
+	#read index
+	if files['@Changed'] and len(files) > 1:
+		for filename, content in files.items():
+			if filename == '@Changed': continue
+			
+			while filename in files['@Changed']: files['@Changed'].remove(filename)
+
+			if not content[0]: #None content
+				continue
+			#Move file
+			des = os.path.join('.grip/objects', f'{log_num}', filename)
+			os.makedirs(os.path.dirname(des), exist_ok=True)
+			open(des, 'w').write(content[0])
+	else:
+		print("nothing to commit")
+		sys.exit(1)
+
+def commit_witha(files):
+	#read index
+	for filename in files.keys():
+		if filename == '@Changed': continue
+		if filename in files['@Changed']: files['@Changed'].remove(filename)
+		
+		if not content[0]: #None content
+			continue
+		
+		# Read current file and add to index
+		content = open(filename, 'r').read()
+		files[filename] = [content]
+		#Move file
+		des = os.path.join('.grip/objects', f'{log_num}', filename)
+		os.makedirs(os.path.dirname(des), exist_ok=True)
+		open(des, 'w').write(content)
+
+
+index_path = '.grip/index'
+if os.path.exists(index_path):
+	index = open(index_path, 'rb')
+	files = pickle.load(index)
+
+	#find the last commit num
+	_, pre, log_num, log_message = readLog(-1)
+	if log_num == -1:
+		pre, log_num = 0, 0
+	else:
+		log_num += 1
+
+	#commit files
+	if option_a:
+		commit_witha(files)
+	else:
+		commit_base(files)
+	
+
+	print(f"Committed as commit {log_num}")
+	saveLog(pre, log_num, log_num, message)
+	
+	#update index
+	index = open(index_path, 'wb')
+	pickle.dump(files, index)
+	index.close()
+else:
+	print("nothing to commit")
+	sys.exit(1)
