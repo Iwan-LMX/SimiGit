@@ -38,13 +38,13 @@ for filename in sys.argv[1:]:
     #read added files content
     if os.path.exists(filename):
         content = open(filename, 'r').read()
-    else:
-        content = None
 
-    if filename in contents and content == contents[filename]:
-        continue
+        if filename in contents and content == contents[filename]: continue
 
-    contents[filename] = content
+        contents[filename] = content
+    elif filename in contents: #filename file deleted
+        del contents[filename]
+
     contents['@Changed'], contents['@Staged'] = True, True
 #-----------------------------------------------------#
 #--------------Save files to  index-------------------#

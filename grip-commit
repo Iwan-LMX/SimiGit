@@ -59,7 +59,7 @@ def saveLog(pre_id, curr_id, num, message):
 #-----------------------------------------------------#
 def commit_base(files):
 	#read index
-	if files['@Changed'] and len(files) > 2:
+	if files['@Changed']:
 		for filename, content in files.items():
 			if filename == '@Changed' or filename == '@Staged': continue
 			#Move file
