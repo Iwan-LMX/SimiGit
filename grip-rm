@@ -20,6 +20,19 @@ if not args.filenames:
 	parser.print_usage()
 	sys.exit(1)
 
+def error_resaon(filename, contents):
+	file = open(filename, 'r').read()
+	if file != contents[filename][0]:
+		if contents[filename][1]: #Staged
+			print(f"grip-rm: error: '{filename}' in index is different to both the working file and the repository", file=sys.stderr)
+			sys.exit(1)
+		else: #Not Staged
+			print(f"grip-rm: error: '{filename}' in the repository is different to the working file", file=sys.stderr)
+			sys.exit(1)
+	
+	if contents[filename][1]: #Staged
+			print(f"grip-rm: error: '{filename}' has staged changes in the index", file=sys.stderr)
+			sys.exit(1)
 #-----------------------------------------------------#
 #----------------Remove Files-------------------------#
 #-----------------------------------------------------#
@@ -42,6 +55,10 @@ def remove_file(filename, contents):
 		return
 	#2. Cached Option
 	if args.cached:
+		file = open(filename, 'r').read()
+		if contents[filename][1] and contents[filename][0] != file: #Staged and different
+			print(f"grip-rm: error: '{filename}' in index is different to both the working file and the repository", file=sys.stderr)
+			sys.exit(1)
 		#delete from index
 		del contents[filename]
 		return
@@ -49,8 +66,7 @@ def remove_file(filename, contents):
 	#3. Normal Option
 	#Staged file
 	if contents["@Staged"]: 
-		print(f"grip-rm: error: '{filename}' has staged changes in the index", file=sys.stderr)
-		sys.exit(1)
+		error_resaon(filename, contents)
 	
 	del contents[filename]
 	if os.path.exists(filename):

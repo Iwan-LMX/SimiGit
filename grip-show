@@ -54,7 +54,7 @@ def check_adds(filename):
 		index = open(index_path, 'rb')
 		files = pickle.load(index)
 		if filename in files:
-			print(files[filename], end="")
+			print(files[filename][0], end="")
 			return
 	
 	print(f"grip-show: error: '{filename}' not found in index", file=sys.stderr)

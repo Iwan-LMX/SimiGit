@@ -65,7 +65,8 @@ def commit_base(files):
 			#Move file
 			des = os.path.join('.grip/objects', f'{log_num}', filename)
 			os.makedirs(os.path.dirname(des), exist_ok=True)
-			open(des, 'w').write(content)
+			open(des, 'w').write(content[0])
+			content[1] = False
 	else:
 		print("nothing to commit")
 		sys.exit(1)
@@ -78,7 +79,7 @@ def commit_witha(files):
 
 			# Read current file and add to index
 			content = open(filename, 'r').read()
-			files[filename] = content
+			files[filename] = [content, False]
 			#Move file
 			des = os.path.join('.grip/objects', f'{log_num}', filename)
 			os.makedirs(os.path.dirname(des), exist_ok=True)

@@ -19,7 +19,7 @@ if len(sys.argv) == 1:
     contents: 
         '@Changed': True false
         '@Staged': True false
-        filename: file content
+        filename: file content, Staged
 '''
 contents = {}
 index_path = '.grip/index'
@@ -39,9 +39,9 @@ for filename in sys.argv[1:]:
     if os.path.exists(filename):
         content = open(filename, 'r').read()
 
-        if filename in contents and content == contents[filename]: continue
+        if filename in contents and content == contents[filename][0]: continue
 
-        contents[filename] = content
+        contents[filename] = [content, True]
     elif filename in contents: #filename file deleted
         del contents[filename]
 
