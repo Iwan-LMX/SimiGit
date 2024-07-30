@@ -53,6 +53,7 @@ def remove_file(filename, contents):
 			sys.exit(1)
 		#delete from index
 		del contents[filename]
+		contents['@Files'].remove(filename)
 		return
 	
 	#2. Normal Option

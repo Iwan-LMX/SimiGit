@@ -12,30 +12,80 @@ if len(sys.argv) != 1:
 	sys.exit(1)
 
 #-----------------------------------------------------#
+def readLog(n: int):
+	"""
+		Test if ./grip/logs/HEAD exist;
+		return prefer, this id, commit_num, message
+	"""
+	pre_id, curr_id, num, message = '', '', -1, ''
+	log_path = ".grip/logs/HEAD"
+	if os.path.exists(".grip/logs/HEAD"):
+		log = open(log_path, 'r').readlines()
+		pre_info, commit_message = log[n].split(':')
+
+		pre_info = pre_info.split()
+		pre_id, curr_id = int(pre_info[0]), int(pre_info[1])
+		
+		num, message = re.findall(r"(\d+)\s(.*)", commit_message.strip())[0]
+
+	return pre_id, curr_id, int(num), message
+#-----------------------------------------------------#
 #------------------Load Files-------------------------#
 #-----------------------------------------------------#
-curr_files = set()
+curr_files, index_files, repo_files = set(), set(), set()
 for filename in os.listdir():
 	if re.match(r"[a-zA-Z0-9][a-zA-Z0-9.\-_]*", filename):
 		curr_files.add(filename)
 
-files = curr_files.copy()
 index_path = '.grip/index'
 if os.path.exists(index_path):
 	index = open(index_path, 'rb')
 	contents = pickle.load(index)
-	files = curr_files.union(contents['@Files'])
+	index_files = contents['@Files']
+
+log_num = readLog(-1)[2]
+repo_path = os.path.join('.grip/objects', f'{log_num}')
+if os.path.exists(repo_path):
+	for filename in os.listdir(repo_path):
+		repo_files.add(filename)
+
+files = curr_files.union(index_files, repo_files)
 	
 #-----------------------------------------------------#
 #---------------Check Files Status--------------------#
 #-----------------------------------------------------#
-def check_status(filename, contents, index_files, curr_files):
+def check_status(filename, contents, index_files: set, curr_files: set, repo_files: set):
 	#Untracked
-	if filename not in index_files:
+	if filename not in index_files.union(repo_files):
 		print(f'{filename} - untracked');	return
+	
+	#Deleted
+	if filename not in index_files.union(curr_files):
+		print(f'{filename} - file deleted, deleted from index');	return
+
+	if filename not in index_files:
+		print(f'{filename} - deleted from index'); return
+
+	if filename not in curr_files:
+		print(f'{filename} - file deleted'); return
+
+	#All exists
+	content = contents[filename]
+	if content[0] != open(filename, 'r').read(): #Changed
+		if content[1]: # Staged
+			print(f'{filename} - file changed, changes staged for commit'); return
+		else: #Not Staged
+			print(f'{filename} - file changed, changes not staged for commit'); return
+		
+	else: #Not Changed
+		if content[1]: # Staged
+			print(f'{filename} - added to index'); return
+		else: #Not Staged
+			print(f'{filename} - same as repo'); return
+	
 
 	#Deleted both from folder and index
-	if filename not in curr_files: 
+	if filename not in curr_files.union(index_files) : 
 		if filename not in contents:
 			print(f'{filename} - file deleted, deleted from index');	return
 		#Deleted
@@ -67,7 +117,7 @@ if os.path.exists(index_path):
 	index_files = contents['@Files']
 	
 	for filename in sorted(files):
-		check_status(filename, contents, index_files, curr_files)
+		check_status(filename, contents, index_files, curr_files, repo_files)
 	
 else:
 	for filename in files:
