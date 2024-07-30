@@ -61,7 +61,7 @@ def commit_base(files):
 	#read index
 	if files['@Changed']:
 		for filename, content in files.items():
-			if filename == '@Changed' or filename == '@Staged': continue
+			if filename == '@Changed' or filename == '@Staged' or filename == '@Files': continue
 			#Move file
 			des = os.path.join('.grip/objects', f'{log_num}', filename)
 			os.makedirs(os.path.dirname(des), exist_ok=True)
@@ -75,7 +75,7 @@ def commit_witha(files):
 	#read index
 	if len(files) > 2:
 		for filename in files.keys():
-			if filename == '@Changed' or filename == '@Staged': continue
+			if filename == '@Changed' or filename == '@Staged' or filename == '@Files': continue
 
 			# Read current file and add to index
 			content = open(filename, 'r').read()

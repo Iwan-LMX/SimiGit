@@ -13,7 +13,7 @@ if len(sys.argv) != 2 or ':' not in sys.argv[1]:
 
 commit_num, filename = sys.argv[1].split(':', 1)
 
-if re.match(r"[a-zA-Z0-9.\-_]+", filename).group() != filename:
+if not re.match(r"[a-zA-Z0-9][a-zA-Z0-9.\-_]*", filename):
 	print(f"grip-show: error: invalid filename '{filename}'", file=sys.stderr)
 	sys.exit(1)
 

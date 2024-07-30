@@ -19,6 +19,7 @@ if len(sys.argv) == 1:
     contents: 
         '@Changed': True false
         '@Staged': True false
+        '@Files': Set(filename)
         filename: file content, Staged
 '''
 contents = {}
@@ -28,7 +29,7 @@ if os.path.exists(index_path):
     contents = pickle.load(index)
 
 for filename in sys.argv[1:]:
-    if re.match(r"[a-zA-Z0-9.\-_]+", filename).group() != filename:
+    if not re.match(r"[a-zA-Z0-9][a-zA-Z0-9.\-_]*", filename):
         print(f"grip-add: error: invalid filename '{filename}'", file=sys.stderr)
         sys.exit(1)
     if filename not in contents and not os.path.exists(filename):
@@ -45,6 +46,8 @@ for filename in sys.argv[1:]:
     elif filename in contents: #filename file deleted
         del contents[filename]
 
+    if '@Files' not in contents: contents['@Files'] = set()
+    contents['@Files'].add(filename)
     contents['@Changed'], contents['@Staged'] = True, True
 #-----------------------------------------------------#
 #--------------Save files to  index-------------------#

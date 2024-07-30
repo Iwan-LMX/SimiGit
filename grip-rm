@@ -37,7 +37,7 @@ def error_resaon(filename, contents):
 #----------------Remove Files-------------------------#
 #-----------------------------------------------------#
 def remove_file(filename, contents):
-	if re.match(r"[a-zA-Z0-9.\-_]+", filename).group() != filename:
+	if not re.match(r"[a-zA-Z0-9][a-zA-Z0-9.\-_]*", filename):
 		print(f"grip-add: error: invalid filename '{filename}'", file=sys.stderr)
 		sys.exit(1)
 
@@ -45,30 +45,23 @@ def remove_file(filename, contents):
 		print(f"grip-rm: error: '{filename}' is not in the grip repository", file=sys.stderr)
 		sys.exit(1)
 
-	#1. Force option
-	if args.force:	
-		#delete from index
-		del contents[filename]
-		#delete from current
-		if os.path.exists(filename):
-			os.remove(filename)
-		return
-	#2. Cached Option
+	#1. Cached Option
 	if args.cached:
 		file = open(filename, 'r').read()
-		if contents[filename][1] and contents[filename][0] != file: #Staged and different
+		if not args.force and contents[filename][1] and contents[filename][0] != file: #Staged and different
 			print(f"grip-rm: error: '{filename}' in index is different to both the working file and the repository", file=sys.stderr)
 			sys.exit(1)
 		#delete from index
 		del contents[filename]
 		return
 	
-	#3. Normal Option
+	#2. Normal Option
 	#Staged file
-	if contents["@Staged"]: 
+	if not args.force and contents["@Staged"]: 
 		error_resaon(filename, contents)
 	
 	del contents[filename]
+	contents['@Files'].remove(filename)
 	if os.path.exists(filename):
 		os.remove(filename)
 
