@@ -37,16 +37,16 @@ for filename in os.listdir():
 	if re.match(r"[a-zA-Z0-9][a-zA-Z0-9.\-_]*", filename):
 		curr_files.add(filename)
 
-index_path = '.grip/index'
-if os.path.exists(index_path):
-	index = open(index_path, 'rb')
+INDEX_PATH = '.grip/index'
+if os.path.exists(INDEX_PATH):
+	index = open(INDEX_PATH, 'rb')
 	contents = pickle.load(index)
 	index_files = contents['@Files']
 
 log_num = readLog(-1)[2]
-repo_path = os.path.join('.grip/objects', f'{log_num}')
-if os.path.exists(repo_path):
-	for filename in os.listdir(repo_path):
+REPO_PATH = os.path.join('.grip/objects', f'{log_num}')
+if os.path.exists(REPO_PATH):
+	for filename in os.listdir(REPO_PATH):
 		repo_files.add(filename)
 
 files = curr_files.union(index_files, repo_files)
@@ -69,50 +69,28 @@ def check_status(filename, contents, index_files: set, curr_files: set, repo_fil
 	if filename not in curr_files:
 		print(f'{filename} - file deleted'); return
 
-	#All exists
-	content = contents[filename]
-	if content[0] != open(filename, 'r').read(): #Changed
-		if content[1]: # Staged
-			print(f'{filename} - file changed, changes staged for commit'); return
-		else: #Not Staged
-			print(f'{filename} - file changed, changes not staged for commit'); return
-		
-	else: #Not Changed
-		if content[1]: # Staged
-			print(f'{filename} - added to index'); return
-		else: #Not Staged
-			print(f'{filename} - same as repo'); return
-	
+	#Existed both curr and index not repo
+	repo_path = os.path.join(REPO_PATH, filename)
+	if not os.path.exists(repo_path):
+		print(f'{filename} - added to index'); return
 
-	#Deleted both from folder and index
-	if filename not in curr_files.union(index_files) : 
-		if filename not in contents:
-			print(f'{filename} - file deleted, deleted from index');	return
-		#Deleted
+	#Existed both curr, index and repo
+	index_content = contents[filename]
+	curr_content = open(filename, 'r').read()
+	repo_content = open(repo_path, 'r').read()
+	if index_content[0] != curr_content: #Changed
+		if index_content[0] != repo_content:
+			print(f'{filename} - file changed, different changes staged for commit'); return
 		else:
-			print(f'{filename} - file deleted'); return
-
-	#In index, deleted in folder
-	if filename not in contents:
-		print(f'{filename} - deleted from index'); return
-	
-	#Change and Stage
-	content = contents[filename]
-	if content[0] != open(filename, 'r').read(): #Changed
-		if content[1]: # Staged
-			print(f'{filename} - file changed, changes staged for commit'); return
-		else: #Not Staged
 			print(f'{filename} - file changed, changes not staged for commit'); return
-		
 	else: #Not Changed
-		if content[1]: # Staged
-			print(f'{filename} - added to index'); return
-		else: #Not Staged
+		if index_content[0] != repo_content:
+			print(f'{filename} - file changed, changes staged for commit'); return
+		else:
 			print(f'{filename} - same as repo'); return
 
-
-if os.path.exists(index_path):
-	index = open(index_path, 'rb')
+if os.path.exists(INDEX_PATH):
+	index = open(INDEX_PATH, 'rb')
 	contents = pickle.load(index)
 	index_files = contents['@Files']
 	
