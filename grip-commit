@@ -44,12 +44,22 @@ def readLog(n: int):
 		num, message = re.findall(r"(\d+)\s(.*)", commit_message.strip())[0]
 
 	return pre_id, curr_id, int(num), message
+def initfiles():
+	#create logs
+	log_path = ".grip/logs/HEAD"
+	os.makedirs(os.path.dirname(log_path), exist_ok=True)
+
+	#Create Trunk
+	TRUNCK_PATH = '.grip/logs/refs/heads/trunk'
+	os.makedirs(os.path.dirname(TRUNCK_PATH), exist_ok=True)
+	open(TRUNCK_PATH, 'w')
 
 def saveLog(pre_id, curr_id, num, message):
 	log_path = ".grip/logs/HEAD"
-	os.makedirs(os.path.dirname(log_path), exist_ok=True)
+	if not os.path.exists((log_path)):
+		initfiles()
+	
 	content = f"{pre_id} {curr_id} commit : {num} {message}\n"
-
 	open(log_path, 'a').write(content)
 
 	open(".grip/COMMIT_EDITMSG", 'w').write(f"{num} {message}\n")
