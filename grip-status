@@ -67,16 +67,23 @@ def check_status(filename, contents, index_files: set, curr_files: set, repo_fil
 		print(f'{filename} - deleted from index'); return
 
 	if filename not in curr_files:
-		print(f'{filename} - file deleted'); return
+		if filename not in repo_files:
+			print(f'{filename} - added to index, file deleted'); return
+		else:
+			print(f'{filename} - file deleted'); return
+
+	index_content = contents[filename]
+	curr_content = open(filename, 'r').read()
 
 	#Existed both curr and index not repo
 	repo_path = os.path.join(REPO_PATH, filename)
 	if not os.path.exists(repo_path):
-		print(f'{filename} - added to index'); return
-
+		if index_content[0] != curr_content: #Changed
+			print(f'{filename} - added to index, file changed'); return
+		else:
+			print(f'{filename} - added to index'); return
+	
 	#Existed both curr, index and repo
-	index_content = contents[filename]
-	curr_content = open(filename, 'r').read()
 	repo_content = open(repo_path, 'r').read()
 	if index_content[0] != curr_content: #Changed
 		if index_content[0] != repo_content:
