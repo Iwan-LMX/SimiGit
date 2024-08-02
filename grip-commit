@@ -54,6 +54,9 @@ def initfiles():
 	os.makedirs(os.path.dirname(TRUNCK_PATH), exist_ok=True)
 	open(TRUNCK_PATH, 'w')
 
+	#Create HEAD
+	open('.grip/HEAD', 'w').write('ref: '+ TRUNCK_PATH)
+
 def saveLog(pre_id, curr_id, num, message):
 	log_path = ".grip/logs/HEAD"
 	if not os.path.exists((log_path)):
@@ -63,7 +66,7 @@ def saveLog(pre_id, curr_id, num, message):
 	open(log_path, 'a').write(content)
 
 	open(".grip/COMMIT_EDITMSG", 'w').write(f"{num} {message}\n")
-	
+
 	#Save index to branch
 	curr_branch = open('.grip/HEAD', 'r').readline().strip()
 	curr_path = curr_branch.split(":")[-1].strip()
@@ -124,7 +127,7 @@ if os.path.exists(index_path):
 	
 	files['@Changed'], files['@Staged'] = False, False
 	print(f"Committed as commit {log_num}")
-	saveLog(pre, log_num, log_num, message, files)
+	saveLog(pre, log_num, log_num, message)
 	
 	#update index
 	index = open(index_path, 'wb')

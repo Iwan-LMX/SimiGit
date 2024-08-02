@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import sys, os, re, pickle, argparse
+import sys, os, re, pickle, argparse, shutil
 #-----------------------------------------------------#
 #--------------Error Messages-------------------------#
 #-----------------------------------------------------#
@@ -49,7 +49,11 @@ else:
 
 	for filename in os.listdir():
 		if re.match(r"[a-zA-Z0-9][a-zA-Z0-9.\-_]*", filename) and 'grip-' not in filename and 'test' not in filename:
+			if '2041'  in filename: continue
 			os.remove(filename)
 	
-	
-			
+	#Load Last commit files from repo
+	repo_path = os.path.join('.grip/objects', str(load['@LastCommit']))
+	for file in os.listdir(repo_path):
+		file_path = os.path.join(repo_path, file)
+		shutil.copy(file_path, file)
