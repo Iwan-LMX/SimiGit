@@ -63,7 +63,13 @@ def saveLog(pre_id, curr_id, num, message):
 	open(log_path, 'a').write(content)
 
 	open(".grip/COMMIT_EDITMSG", 'w').write(f"{num} {message}\n")
-	return None
+	
+	#Save index to branch
+	curr_branch = open('.grip/HEAD', 'r').readline().strip()
+	curr_path = curr_branch.split(":")[-1].strip()
+	files['@LastCommit'] = num
+	pickle.dump(files, open(curr_path, 'wb'))
+
 #-----------------------------------------------------#
 #--------------Load files from index------------------#
 #-----------------------------------------------------#
@@ -71,7 +77,7 @@ def commit_base(files):
 	#read index
 	if files['@Changed']:
 		for filename, content in files.items():
-			if filename == '@Changed' or filename == '@Staged' or filename == '@Files': continue
+			if '@'in filename: continue
 			#Move file
 			des = os.path.join('.grip/objects', f'{log_num}', filename)
 			os.makedirs(os.path.dirname(des), exist_ok=True)
@@ -85,7 +91,7 @@ def commit_witha(files):
 	#read index
 	if len(files) > 2:
 		for filename in files.keys():
-			if filename == '@Changed' or filename == '@Staged' or filename == '@Files': continue
+			if '@'in filename: continue
 
 			# Read current file and add to index
 			content = open(filename, 'r').read()
@@ -118,7 +124,7 @@ if os.path.exists(index_path):
 	
 	files['@Changed'], files['@Staged'] = False, False
 	print(f"Committed as commit {log_num}")
-	saveLog(pre, log_num, log_num, message)
+	saveLog(pre, log_num, log_num, message, files)
 	
 	#update index
 	index = open(index_path, 'wb')

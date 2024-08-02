@@ -25,8 +25,9 @@ if not os.path.exists(BRANCH_PATH):
 #--------------Process branches-----------------------#
 #-----------------------------------------------------#
 def create_branch(branch):
-	open(branch, 'w')
-
+	index_path = '.grip/index'
+	index = open(index_path, 'rb'); save = open(branch, 'wb')
+	files = pickle.load(index); 	pickle.dump(files, save)
 #Show branch
 if not args.branch:
 	branches = os.listdir(BRANCH_PATH)

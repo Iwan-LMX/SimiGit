@@ -19,6 +19,37 @@ parser = argparse.ArgumentParser(
 parser.add_argument('branch', nargs='?')
 args = parser.parse_args()
 
+if not args.branch:
+	parser.print_usage()
+	sys.exit(1)
+
+branch_path = os.path.join(BRANCH_PATH, args.branch)
+if not os.path.exists(branch_path):
+	print(f"grip-checkout: error: unknown branch '{args.branch}'", file=sys.stderr)
+	sys.exit(1)
 #-----------------------------------------------------#
 #--------------Checkout branches----------------------#
 #-----------------------------------------------------#
+curr_branch = open('.grip/HEAD', 'r').readline().strip()
+curr_path = curr_branch.split(":")[-1].strip()
+
+if curr_path == branch_path:
+	print(f"Already on '{args.branch}'")
+else:
+	print(f"Switched to branch '{args.branch}'")
+	#Save information to current branch
+	open('.grip/HEAD', 'w').write('ref: '+ branch_path)
+	
+	index_path = '.grip/index'
+	index = open(index_path, 'rb'); save = open(curr_path, 'wb')
+	files = pickle.load(index); 	pickle.dump(files, save)
+	#Load destination branch index 
+	load = open(branch_path, 'rb');	index = open(index_path, 'wb')
+	load = pickle.load(load);		pickle.dump(load, index)
+
+	for filename in os.listdir():
+		if re.match(r"[a-zA-Z0-9][a-zA-Z0-9.\-_]*", filename) and 'grip-' not in filename and 'test' not in filename:
+			os.remove(filename)
+	
+	
+			
