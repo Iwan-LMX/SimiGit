@@ -1,0 +1,13 @@
+grip-init: error: can not run grip because .git present in current directory
+grip-init: error: can not run grip because .git present in current directory
+grip-init: error: can not run grip because .git present in current directory
+grip-init: error: can not run grip because .git present in current directory
+./test0.sh: 38: grip-add: not found
+./test0.sh: 39: grip-add: not found
+./test0.sh: 40: grip-add: not found
+./test0.sh: 43: grip-add: not found
+./test0.sh: 44: grip-add: not found
+./test0.sh: 47: grip-add: not found
+./test0.sh: 48: grip-add: not found
+./test0.sh: 49: grip-add: not found
+./test0.sh: 50: grip-add: not found

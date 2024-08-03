@@ -1,0 +1,17 @@
+grip-commit: error: grip repository directory .grip not found
+grip-commit: error: grip repository directory .grip not found
+grip-commit: error: grip repository directory .grip not found
+grip-commit: error: grip repository directory .grip not found
+Initialized empty grip repository in .grip
+usage: grip-commit [-a] -m commit-message
+usage: grip-commit [-a] -m commit-message
+nothing to commit
+nothing to commit
+nothing to commit
+nothing to commit
+usage: grip-commit [-a] -m commit-message
+usage: grip-commit [-a] -m commit-message
+Committed as commit 0
+nothing to commit
+nothing to commit
+nothing to commit

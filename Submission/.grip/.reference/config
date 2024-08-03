@@ -1,0 +1,9 @@
+[core]
+	repositoryformatversion = 0
+	fileMode = false
+	bare = false
+	logallrefupdates = true
+	worktree = /import/kamen/7/z5433288/Desktop/9044/Assignment2/Submission
+[user]
+	email = grip@example.com
+	name = grip
