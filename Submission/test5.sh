@@ -2,7 +2,7 @@
 # This is for test grip-rm and grip commit
 # My code temp
 {
-    rm .grip
+    rm -rf .grip
     ./grip-commit -m dfdf
     touch a
     ./grip-add :a
@@ -12,7 +12,7 @@
 
 # correct 
 {
-    rm .grip
+    rm -rf .grip
     2041 grip-commit -m dfdf
     touch a
     2041 grip-add :a

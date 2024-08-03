@@ -1,0 +1,15 @@
+usage: grip-init
+usage: grip-init
+Initialized empty grip repository in .grip
+grip-init: error: .grip already exists
+./test0.sh: 13: grip-add: not found
+./test0.sh: 14: grip-add: not found
+./test0.sh: 15: grip-add: not found
+rm: cannot remove 'a': No such file or directory
+rm: cannot remove 'b': No such file or directory
+./test0.sh: 18: grip-add: not found
+./test0.sh: 19: grip-add: not found
+./test0.sh: 22: grip-add: not found
+./test0.sh: 23: grip-add: not found
+./test0.sh: 24: grip-add: not found
+./test0.sh: 25: grip-add: not found
