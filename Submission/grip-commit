@@ -91,19 +91,22 @@ def commit_base(files):
 		sys.exit(1)
 
 def commit_witha(files):
+	commit = False
 	#read index
-	if len(files) > 2:
-		for filename in files.keys():
-			if '@'in filename: continue
+	for filename, index_content in files.items():
+		if '@'in filename: continue
+		# Read current file and add to index
+		content = open(filename, 'r').read()
+		if not index_content[1] and index_content[0] == content: continue
 
-			# Read current file and add to index
-			content = open(filename, 'r').read()
-			files[filename] = [content, False]
-			#Move file
-			des = os.path.join('.grip/objects', f'{log_num}', filename)
-			os.makedirs(os.path.dirname(des), exist_ok=True)
-			open(des, 'w').write(content)
-	else:
+		commit = True
+		files[filename] = [content, False]
+		#Move file
+		des = os.path.join('.grip/objects', f'{log_num}', filename)
+		os.makedirs(os.path.dirname(des), exist_ok=True)
+		open(des, 'w').write(content)
+	
+	if not commit:
 		print("nothing to commit")
 		sys.exit(1)
 
