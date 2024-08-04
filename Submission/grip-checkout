@@ -48,7 +48,7 @@ else:
 	load = pickle.load(load);		pickle.dump(load, index)
 
 	for filename in os.listdir():
-		if re.match(r"[a-zA-Z0-9][a-zA-Z0-9.\-_]*", filename) and 'grip-' not in filename and 'test' not in filename:
+		if re.match(r"^[a-zA-Z0-9][a-zA-Z0-9.\-_]*$", filename) and 'grip-' not in filename and 'test' not in filename:
 			if '2041'  in filename: continue
 			os.remove(filename)
 	

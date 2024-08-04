@@ -29,7 +29,7 @@ if os.path.exists(index_path):
     contents = pickle.load(index)
 
 for filename in sys.argv[1:]:
-    if not re.match(r"[a-zA-Z0-9][a-zA-Z0-9.\-_]*", filename):
+    if not re.match(r"^[a-zA-Z0-9][a-zA-Z0-9.\-_]*$", filename):
         print(f"grip-add: error: invalid filename '{filename}'", file=sys.stderr)
         sys.exit(1)
     if filename not in contents and not os.path.exists(filename):

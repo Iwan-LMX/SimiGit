@@ -1,33 +1,51 @@
 #!/bin/dash
+# This is for test grip-log
+# My code temp
+{   
+    rm -rf .grip
+    ./grip-log fdfd
+    ./grip-log
+    
+    ./grip-init
+    ./grip-log fdfd
+    ./grip-log
 
-# Commands to execute
-commands=(
-    "grip-init fdfd"
-    "rm -rf .grip"
-    "grip-init f"
-    "grip-init"
-    "grip-init"
-    "#test grip-add"
-    "grip-add 213123"
-    "grip-add @#@FDF"
-    "grip-add"
-    "rm a b"
-    "grip-add a"
-    "grip-add a FDFDF@##$"
-    "touch a b"
-    "grip-add a bdfd"
-    "grip-add a b"
-    "grip-add a"
-    "grip-add b"
-)
+    touch a
+    ./grip-add a
+    ./grip-commit -m commit0
+    ./grip-log
 
-# Loop through the commands and execute them
-for cmd in "${commands[@]}"; do
-    # Check if the command contains 'grip' and replace it with './grip'
-    if [[ $cmd == grip* ]]; then
-        cmd="./${cmd}"
-    fi
+    touch b
+    ./grip-add b
+    ./grip-commit -m commit1
+    ./grip-log
+} > temp 2>&1
 
-    # Execute the command
-    eval $cmd
-done
+# correct 
+{
+    rm -rf .grip
+    2041 grip-log fdfd
+    2041 grip-log
+    
+    2041 grip-init
+    2041 grip-log fdfd
+    2041 grip-log
+
+    touch a
+    2041 grip-add a
+    2041 grip-commit -m commit0
+    2041 grip-log
+
+    touch b
+    2041 grip-add b
+    2041 grip-commit -m commit1
+    2041 grip-log
+}> temp2041 2>&1
+
+# Compare the files and output result
+if diff temp temp2041 > /dev/null 2>&1; then
+    echo "pass"
+else
+    echo "Failed!"
+fi
+

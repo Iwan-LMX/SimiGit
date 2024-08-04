@@ -37,7 +37,7 @@ def error_resaon(filename, contents):
 #----------------Remove Files-------------------------#
 #-----------------------------------------------------#
 def remove_file(filename, contents):
-	if not re.match(r"[a-zA-Z0-9][a-zA-Z0-9.\-_]*", filename):
+	if not re.match(r"^[a-zA-Z0-9][a-zA-Z0-9.\-_]*$", filename):
 		print(f"grip-add: error: invalid filename '{filename}'", file=sys.stderr)
 		sys.exit(1)
 

@@ -34,7 +34,7 @@ def readLog(n: int):
 #-----------------------------------------------------#
 curr_files, index_files, repo_files = set(), set(), set()
 for filename in os.listdir():
-	if re.match(r"[a-zA-Z0-9][a-zA-Z0-9.\-_]*", filename):
+	if re.match(r"^[a-zA-Z0-9][a-zA-Z0-9.\-_]*$", filename):
 		curr_files.add(filename)
 
 INDEX_PATH = '.grip/index'

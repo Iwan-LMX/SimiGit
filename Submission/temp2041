@@ -1,17 +1,27 @@
-grip-commit: error: grip repository directory .grip not found
-grip-commit: error: grip repository directory .grip not found
-grip-commit: error: grip repository directory .grip not found
-grip-commit: error: grip repository directory .grip not found
+grip-show: error: grip repository directory .grip not found
+grip-show: error: grip repository directory .grip not found
+grip-show: error: grip repository directory .grip not found
+grip-show: error: grip repository directory .grip not found
+grip-show: error: grip repository directory .grip not found
 Initialized empty grip repository in .grip
-usage: grip-commit [-a] -m commit-message
-usage: grip-commit [-a] -m commit-message
-nothing to commit
-nothing to commit
-nothing to commit
-nothing to commit
-usage: grip-commit [-a] -m commit-message
-usage: grip-commit [-a] -m commit-message
+grip-show: error: 'a' not found in index
+grip-show: error: unknown commit '0'
+grip-show: error: invalid filename 'a:df'
+usage: grip-show <commit>:<filename>
+usage: grip-show <commit>:<filename>
+grip-show: error: unknown commit '1.1'
+1231
+grip-show: error: unknown commit '0'
+grip-show: error: unknown commit 'dfd'
 Committed as commit 0
+1231
+1231
+grip-show: error: unknown commit '1'
+usage: grip-show <commit>:<filename>
+1231
+1231
+grip-show: error: unknown commit '1'
 nothing to commit
-nothing to commit
-nothing to commit
+1231
+1231
+grip-show: error: unknown commit '1'
