@@ -1,6 +1,6 @@
 #!/bin/dash
 # This is for test grip-log
-# My code temp
+# My code @temp
 {   
     rm -rf .grip
     ./grip-log fdfd
@@ -19,7 +19,7 @@
     ./grip-add b
     ./grip-commit -m commit1
     ./grip-log
-} > temp 2>&1
+} > @temp 2>&1
 
 # correct 
 {
@@ -40,10 +40,10 @@
     2041 grip-add b
     2041 grip-commit -m commit1
     2041 grip-log
-}> temp2041 2>&1
+}> @temp2041 2>&1
 
 # Compare the files and output result
-if diff temp temp2041 > /dev/null 2>&1; then
+if diff @temp @temp2041 > /dev/null 2>&1; then
     echo "pass"
 else
     echo "Failed!"

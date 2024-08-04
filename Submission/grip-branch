@@ -12,8 +12,13 @@ parser = argparse.ArgumentParser(
 	add_help=False
 )	
 parser.add_argument('-d', '--delete', action='store_true') #delete branch
-parser.add_argument('branch', nargs='?')
+parser.add_argument('branch', nargs='*')
 args = parser.parse_args()
+if len(args.branch) > 1:
+	parser.print_usage()
+	sys.exit(1)
+elif len(args.branch):
+	args.branch = args.branch[0]
 BRANCH_PATH = '.grip/logs/refs/heads'
 
 

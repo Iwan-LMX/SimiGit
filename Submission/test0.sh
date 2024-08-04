@@ -1,6 +1,6 @@
 #!/bin/dash
 # This is for test grip-init and grip-add
-# My code temp
+# My code @temp
 {
     ./grip-init fdfd
     rm -rf .grip
@@ -23,7 +23,7 @@
     ./grip-add a b
     ./grip-add a
     ./grip-add b
-} > temp 2>&1
+} > @temp 2>&1
 
 # correct 
 {
@@ -48,10 +48,10 @@
     2041 grip-add a b
     2041 grip-add a
     2041 grip-add b
-}> temp2041 2>&1
+}> @temp2041 2>&1
 
 # Compare the files and output result
-if diff temp temp2041 > /dev/null 2>&1; then
+if diff @temp @temp2041 > /dev/null 2>&1; then
     echo "pass"
 else
     echo "Failed!"
